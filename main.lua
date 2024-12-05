@@ -22,15 +22,18 @@ function tdxScript.JoinMap(mapName)
         local display = nil
         for i,v in pairs(workspace:WaitForChild("APCs"):GetChildren()) do
             display = v.mapdisplay.screen.displayscreen
-            verboseLog(display.map.Text)
-            if display.map.Text == mapName and display.plrcount.Text == "0/4" then
-                localPlayer.Character.HumanoidRootPart.CFrame = v.APC.Detector.CFrame
-                break
+            if display.map.Text == mapName then
+                if display.plrcount.Text == "0/4" then
+                    print("map is available and there are no people in it")
+                    localPlayer.Character.HumanoidRootPart.CFrame = v.APC.Detector.CFrame
+                    break
+                end
             end
         end
+        task.wait()
         repeat task.wait()
-        until display.plrcount.Text ~= "0/4"
-        network.LeaveQueue:FireServer()
+        until display.plrcount.Text ~= "1/4" or 
+       network.LeaveQueue:FireServer()
     end
 end
 -- IN GAME --
