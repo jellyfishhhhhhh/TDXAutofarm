@@ -1,6 +1,3 @@
-
-getfenv().enableVerbose = true
-
 ----------------------
 local replStorage = game:GetService("ReplicatedStorage")
 local remotes = replStorage:WaitForChild("Remotes")
@@ -34,9 +31,9 @@ function tdxScript.JoinMap(mapName)
                 end
             end
         end
-        task.wait()
+        task.wait(1)
         repeat task.wait()
-        until display.plrcount.Text ~= "1/4"
+        until tonumber(string.match(display.plrcount.Text, "^(%d+)/")) >= 2
        network.LeaveQueue:FireServer()
     end
 end
