@@ -1,5 +1,6 @@
 local replStorage = game:GetService("ReplicatedStorage")
 local remotes = replStorage:WaitForChild("Remotes")
+local network = replStorage:WaitForChild("Network")
 
 local localPlayer = game:GetService("Players").LocalPlayer
 local playerGui = localPlayer.PlayerGui
@@ -17,6 +18,27 @@ local function verboseLog(message)
         print("AUTOFARM | "..message)
     end
 end
+-- IN LOBBY --
+
+function tdxScript.StartLogging()
+end
+
+function tdxScript.JoinMap(mapName)
+    while task.wait() do
+        local display = nil
+        for i,v in pairs(workspace:WaitForChild("APCs"):GetChildren()) do
+            display = v.mapdisplay.screen.displayscreen
+            if display.map.Text == mapName and display.plrcount.Text == "0/4" then
+                localPlayer.Character.HumanoidRootPart.CFrame = v.APC.Detector.CFrame
+                break
+            end
+        end
+        repeat task.wait()
+        until display.plrcount.Text ~= "0/4"
+        network.LeaveQueue:FireServer()
+    end
+end
+-- IN GAME --
 
 function tdxScript.Start(Difficulty)
     remotes:WaitForChild("DifficultyVoteCast"):FireServer(Difficulty)
