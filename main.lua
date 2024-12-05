@@ -7,12 +7,6 @@ local playerGui = localPlayer.PlayerGui
 
 local tdxScript = {}
 
-local args = {
-    [1] = "Easy"
-}
-
-remotes:WaitForChild("DifficultyVoteCast"):FireServer(unpack(args))
-
 local function verboseLog(message)
     if getfenv().enableVerbose == true then
         print("AUTOFARM | "..message)
