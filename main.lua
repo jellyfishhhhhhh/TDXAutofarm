@@ -1,3 +1,6 @@
+
+getfenv().enableVerbose = true
+
 ----------------------
 local replStorage = game:GetService("ReplicatedStorage")
 local remotes = replStorage:WaitForChild("Remotes")
@@ -21,20 +24,24 @@ end
 function tdxScript.JoinMap(mapName)
     while task.wait() do
         local display = nil
+        local chosenDisplay = nil
         for i,v in pairs(workspace:WaitForChild("APCs"):GetChildren()) do
             display = v.mapdisplay.screen.displayscreen
             if display.map.Text == mapName then
                 if display.plrcount.Text == "0/4" then
                     print("map is available and there are no people in it")
+                    chosenDisplay = display
                     localPlayer.Character.HumanoidRootPart.CFrame = v.APC.Detector.CFrame
                     break
                 end
             end
         end
         task.wait(1)
-        repeat task.wait()
-        until tonumber(string.match(display.plrcount.Text, "^(%d+)/")) >= 2
-       network.LeaveQueue:FireServer()
+        if chosenDisplay then
+            repeat task.wait()
+            until tonumber(string.match(display.plrcount.Text, "^(%d+)/")) >= 2
+           network.LeaveQueue:FireServer()
+        end
     end
 end
 -- IN GAME --
