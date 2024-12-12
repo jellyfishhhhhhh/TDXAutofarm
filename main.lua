@@ -18,7 +18,7 @@ end
 -- IN LOBBY --
 
 function tdxScript.StartLogging()
-    local fileName = tick()
+    local fileName = tostring(tick())
     writefile(tick(), "")
     function serialize(value)
         if type(value) == "table" then
