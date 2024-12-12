@@ -1,3 +1,4 @@
+
 local replStorage = game:GetService("ReplicatedStorage")
 local remotes = replStorage:WaitForChild("Remotes")
 local network = nil
@@ -17,6 +18,70 @@ end
 -- IN LOBBY --
 
 function tdxScript.StartLogging()
+    local fileName = tick()
+    writefile(tick(), "")
+    function serialize(value)
+        if type(value) == "table" then
+            local result = "{"
+            for k, v in pairs(value) do
+                result = result .. "[" .. serialize(k) .. "]=" .. serialize(v) .. ", "
+            end
+
+            if result ~= "{" then
+                result = result:sub(1, -3)
+            end
+
+            return result .. "}"
+        else
+            return tostring(value)
+        end
+    end
+    
+    function serializeArgs(...)
+        local args = {...}
+        local strArgs = {}
+    
+        for i, v in ipairs(args) do
+            strArgs[i] = serialize(v)
+        end
+    
+        return table.concat(strArgs, ", ")
+    end
+
+    local oldFireServer = hookfunction(Instance.new("RemoteEvent").FireServer, function(self, ...)
+        local serializedArgs = serializeArgs(...)
+        log(namecallmethod, self, serializedArgs)
+    
+        return oldFireServer(self, ...)
+    end)
+   
+    local oldInvokeServer = hookfunction(Instance.new("RemoteFunction").InvokeServer, function(self, ...)
+        local serializedArgs = serializeArgs(...)
+        log(namecallmethod, self, serializedArgs)
+    
+        return oldInvokeServer(self, ...)
+    end)
+    
+    local oldNameCall
+    oldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
+        local namecallmethod = getnamecallmethod()
+    
+        if namecallmethod == "FireServer" or namecallmethod == "InvokeServer" then
+            local serializedArgs = serializeArgs(...)
+            log(namecallmethod, self, serializedArgs)
+        end
+ 
+        return oldNameCall(self, ...)
+    end)
+    
+    function log(method, self, serializedArgs)
+        local text = tostring(self.Name).." "..tostring(serializedArgs).."\n"
+        print(text)
+
+        if self.Name == "PlaceTower" then
+            appendfile(fileName, "TDX:placeTower("..serializeArgs()..")".."\n")
+        end
+    end
 end
 
 function tdxScript.JoinMap(mapName)
@@ -45,20 +110,9 @@ function tdxScript.JoinMap(mapName)
     end
 end
 
-function tdxScript:SetLoadout(tower1, tower2, tower3, tower4, tower5, tower6)
+function tdxScript:SetLoadout(args)
     if game.PlaceId == 9503261072 then
-        local args = {
-            [1] = {
-                [1] = tower1,
-                [2] = tower2,
-                [3] = tower3,
-                [4] = tower4,
-                [5] = tower5,
-                [6] = tower6
-            }
-        }
-        
-        network:WaitForChild("UpdateLoadout"):FireServer(unpack(args))
+        network:WaitForChild("UpdateLoadout"):FireServer(args)
     end
 end
 -- IN GAME --
