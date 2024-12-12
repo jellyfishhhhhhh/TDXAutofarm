@@ -1,4 +1,3 @@
-
 local replStorage = game:GetService("ReplicatedStorage")
 local remotes = replStorage:WaitForChild("Remotes")
 local network = replStorage:WaitForChild("Network")
@@ -19,26 +18,45 @@ function tdxScript.StartLogging()
 end
 
 function tdxScript.JoinMap(mapName)
-    while task.wait() do
-        local display = nil
-        local chosenDisplay = nil
-        for i,v in pairs(workspace:WaitForChild("APCs"):GetChildren()) do
-            display = v.mapdisplay.screen.displayscreen
-            if display.map.Text == mapName then
-                if display.plrcount.Text == "0/4" then
-                    print("map is available and there are no people in it")
-                    chosenDisplay = display
-                    localPlayer.Character.HumanoidRootPart.CFrame = v.APC.Detector.CFrame
-                    break
+    if game.PlaceId == 9503261072 then
+        while task.wait() do
+            local display = nil
+            local chosenDisplay = nil
+            for i,v in pairs(workspace:WaitForChild("APCs"):GetChildren()) do
+                display = v.mapdisplay.screen.displayscreen
+                if display.map.Text == mapName then
+                    if display.plrcount.Text == "0/4" then
+                        print("map is available and there are no people in it")
+                        chosenDisplay = display
+                        localPlayer.Character.HumanoidRootPart.CFrame = v.APC.Detector.CFrame
+                        break
+                    end
                 end
             end
+            task.wait(1)
+            if chosenDisplay then
+                repeat task.wait()
+                until tonumber(string.match(display.plrcount.Text, "^(%d+)/")) >= 2 and 0 < tonumber(string.match(display.plrcount.Text, "^(%d+)/"))
+               network.LeaveQueue:FireServer()
+            end
         end
-        task.wait(1)
-        if chosenDisplay then
-            repeat task.wait()
-            until tonumber(string.match(display.plrcount.Text, "^(%d+)/")) >= 2 and 0 < tonumber(string.match(display.plrcount.Text, "^(%d+)/"))
-           network.LeaveQueue:FireServer()
-        end
+    end
+end
+
+function tdxScript:SetLoadout(tower1, tower2, tower3, tower4, tower5, tower6)
+    if game.PlaceId == 9503261072 then
+        local args = {
+            [1] = {
+                [1] = tower1,
+                [2] = tower2,
+                [3] = tower3,
+                [4] = tower4,
+                [5] = tower5,
+                [6] = tower6
+            }
+        }
+        
+        network:WaitForChild("UpdateLoadout"):FireServer(unpack(args))
     end
 end
 -- IN GAME --
