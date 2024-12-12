@@ -1,7 +1,14 @@
+getfenv().enableVerbose = true
+local TDX = loadstring(game:HttpGet("https://raw.githubusercontent.com/jellyfishhhhhhh/TDXAutofarm/refs/heads/main/main.lua"))()
+TDX.Start("Easy")
+
+----------------------
 local replStorage = game:GetService("ReplicatedStorage")
 local remotes = replStorage:WaitForChild("Remotes")
-local network = replStorage:WaitForChild("Network")
-
+local network = nil
+if game.PlaceId == 9503261072 then
+    network = replStorage:WaitForChild("Network")
+end
 local localPlayer = game:GetService("Players").LocalPlayer
 local playerGui = localPlayer.PlayerGui
 
