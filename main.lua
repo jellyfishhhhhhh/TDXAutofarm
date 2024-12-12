@@ -18,8 +18,8 @@ end
 -- IN LOBBY --
 
 function tdxScript.StartLogging()
-    local fileName = tostring(tick())
-    writefile(fileName, "")
+    local fileName = tick()
+    writefile(tick(), "")
     function serialize(value)
         if type(value) == "table" then
             local result = "{"
@@ -79,7 +79,7 @@ function tdxScript.StartLogging()
         print(text)
 
         if self.Name == "PlaceTower" then
-            appendfile(fileName, "TDX:placeTower("..serializeArgs()..")".."\n")
+            appendfile(fileName, "TDX:placeTower("..tostring(serializeArgs)..")".."\n")
         end
     end
 end
