@@ -18,11 +18,11 @@ end
 
 function tdxScript.StartLogging()
     local fileName = 1
-    local fileContent = readfile(tostring(fileName)..".txt")
+    local fileContent = isfile(tostring(fileName)..".txt")
 
     while fileContent do
         fileName = fileName + 1
-        fileContent = readfile(tostring(fileName)..".txt")
+        fileContent = isfile(tostring(fileName)..".txt")
     end
     fileName = tostring(fileName)..".txt"
 
