@@ -1,3 +1,4 @@
+
 local replStorage = game:GetService("ReplicatedStorage")
 local remotes = replStorage:WaitForChild("Remotes")
 local network = nil
@@ -82,11 +83,11 @@ function tdxScript.StartLogging()
     end)
     
     function log(method, self, serializedArgs)
-        local text = tostring(self.Name).." "..tostring(serializedArgs).."\n"
+        local text = tostring(self.Name).." "..tostring(table.unpack(serializedArgs)).."\n"
         print(text)
 
         if self.Name == "PlaceTower" then
-            appendfile(fileName, "TDX:placeTower("..tostring(serializeArgs)..")".."\n")
+            appendfile(fileName, "TDX:placeTower("..tostring(table.unpack(serializeArgs))..")".."\n")
         end
     end
 end
