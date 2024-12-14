@@ -1,4 +1,3 @@
-
 local replStorage = game:GetService("ReplicatedStorage")
 local remotes = replStorage:WaitForChild("Remotes")
 local network = nil
@@ -18,9 +17,17 @@ end
 -- IN LOBBY --
 
 function tdxScript.StartLogging()
-    local fileName = tick()
-    writefile(tick(), "")
-    function serialize(value)
+    local fileName = 1
+    local fileContent = readfile(tostring(fileName)..".txt")
+
+    while fileContent do
+        fileName = fileName + 1
+        fileContent = readfile(tostring(fileName)..".txt")
+    end
+    fileName = tostring(fileName)..".txt"
+
+    writefile(fileName, "")
+    local function serialize(value)
         if type(value) == "table" then
             local result = "{"
             for k, v in pairs(value) do
@@ -37,7 +44,7 @@ function tdxScript.StartLogging()
         end
     end
     
-    function serializeArgs(...)
+    local function serializeArgs(...)
         local args = {...}
         local strArgs = {}
     
