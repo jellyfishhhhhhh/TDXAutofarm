@@ -105,7 +105,7 @@ function tdxScript:StartLogging()
 
             startTime = time() - offset
         elseif self.Name == "DifficultyVoteReady" then
-            offset = time() - startTime
+            offset = time()
             appendfile(fileName, "TDX:Start('ENTER DIFFICULTY')".."\n")
             startTime = time() - offset
             print(offset)
