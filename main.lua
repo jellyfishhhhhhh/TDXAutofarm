@@ -16,7 +16,8 @@ local function verboseLog(message)
 end
 -- IN LOBBY --
 
-function tdxScript.StartLogging()
+function tdxScript:StartLogging()
+    local startTime = tick()
     local fileName = 1
     local fileContent = isfile(tostring(fileName)..".txt")
 
@@ -85,13 +86,21 @@ function tdxScript.StartLogging()
         local text = tostring(self.Name).." "..tostring(serializedArgs).."\n"
         print(text)
 
+
         if self.Name == "PlaceTower" then
+            appendfile(fileName, "task.wait("..tostring(tick()-startTime)..")")
             appendfile(fileName, "TDX:placeTower("..tostring(serializedArgs)..")".."\n")
+        elseif self.Name == "SellTower" then
+            appendfile(fileName, "task.wait("..tostring(tick()-startTime)..")")
+            appendfile(fileName, "TDX:sellTower("..tostring(serializedArgs)..")".."\n")
+        elseif self.Name == "TowerUpgradeRequest" then
+            appendfile(fileName, "task.wait("..tostring(tick()-startTime)..")")
+            appendfile(fileName, "TDX:upgradeTower("..tostring(serializedArgs)..")".."\n")
         end
     end
 end
 
-function tdxScript.JoinMap(mapName)
+function tdxScript:JoinMap(mapName)
     if game.PlaceId == 9503261072 then
         while task.wait() do
             local display = nil
@@ -135,8 +144,15 @@ function tdxScript:placeTower(tower, strangeValue, location, tryUntilSucceed)
     local towerCountText = playerGui.Interface.BottomBar.TowerCountFrame.Text.Text
     local currentPlacedTowers = string.match(towerCountText, "^(%d+)/")
 
-    remotes:WaitForChild("PlaceTower"):InvokeServer(unpack(args))
-
+    local args = {
+        [1] = strangeValue,
+        [2] = tower,
+        [3] = location,
+        [4] = 0
+    }
+    
+    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("PlaceTower"):InvokeServer(unpack(args))
+    
     local newTowerCountText = playerGui.Interface.BottomBar.TowerCountFrame.Text.Text
     local newPlacedTowers = string.match(newTowerCountText, "^(%d+)/")
 
@@ -151,11 +167,20 @@ function tdxScript:placeTower(tower, strangeValue, location, tryUntilSucceed)
     end
 end
 
-function tdxScript:SellTower(towerId)
+function tdxScript:upgradeTower(tower, option)
+    local args = {
+        [1] = tower,
+        [2] = option
+    }
+    
+    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("TowerUpgradeRequest"):FireServer(unpack(args))    
+end
+
+function tdxScript:sellTower(towerId)
     remotes:WaitForChild("SellTower"):FireServer(towerId)
 end
 
-function tdxScript:SkipWave()
+function tdxScript:skipWave()
     remotes:WaitForChild("SkipWaveVoteCast"):FireServer(true)
 end
 
