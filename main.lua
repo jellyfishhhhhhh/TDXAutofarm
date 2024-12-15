@@ -1,4 +1,3 @@
-
 local replStorage = game:GetService("ReplicatedStorage")
 local remotes = replStorage:WaitForChild("Remotes")
 local network = nil
@@ -18,7 +17,9 @@ end
 -- IN LOBBY --
 
 function tdxScript:StartLogging()
-    local startTime = tick()
+    print("logging started")
+    local startTime = time()
+    local offset = 0
     local fileName = 1
     local fileContent = isfile(tostring(fileName)..".txt")
 
@@ -89,20 +90,25 @@ function tdxScript:StartLogging()
 
 
         if self.Name == "PlaceTower" then
-            appendfile(fileName, "task.wait("..tostring(tick()-startTime)..")")
+            appendfile(fileName, "task.wait("..tostring((time()-offset)-startTime)..")".."\n")
             appendfile(fileName, "TDX:placeTower("..tostring(serializedArgs)..")".."\n")
 
-            startTime = tick()
+            startTime = time() - offset
         elseif self.Name == "SellTower" then
-            appendfile(fileName, "task.wait("..tostring(tick()-startTime)..")")
+            appendfile(fileName, "task.wait("..tostring((time()-offset)-startTime)..")".."\n")
             appendfile(fileName, "TDX:sellTower("..tostring(serializedArgs)..")".."\n")
 
-            startTime = tick()
+            startTime = time() - offset
         elseif self.Name == "TowerUpgradeRequest" then
-            appendfile(fileName, "task.wait("..tostring(tick()-startTime)..")")
+            appendfile(fileName, "task.wait("..tostring((time()-offset)-startTime)..")".."\n")
             appendfile(fileName, "TDX:upgradeTower("..tostring(serializedArgs)..")".."\n")
 
-            startTime = tick()
+            startTime = time() - offset
+        elseif self.Name == "DifficultyVoteReady" then
+            offset = time() - startTime
+            appendfile(fileName, "TDX:Start('ENTER DIFFICULTY')".."\n")
+            startTime = time() - offset
+            print(offset)
         end
     end
 end
@@ -140,7 +146,7 @@ function tdxScript:SetLoadout(args)
 end
 -- IN GAME --
 
-function tdxScript.Start(Difficulty)
+function tdxScript:Start(Difficulty)
     remotes:WaitForChild("DifficultyVoteCast"):FireServer(Difficulty)
     task.wait()
     remotes:WaitForChild("DifficultyVoteReady"):FireServer()
