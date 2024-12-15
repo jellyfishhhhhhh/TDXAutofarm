@@ -1,3 +1,4 @@
+
 local replStorage = game:GetService("ReplicatedStorage")
 local remotes = replStorage:WaitForChild("Remotes")
 local network = nil
@@ -90,12 +91,18 @@ function tdxScript:StartLogging()
         if self.Name == "PlaceTower" then
             appendfile(fileName, "task.wait("..tostring(tick()-startTime)..")")
             appendfile(fileName, "TDX:placeTower("..tostring(serializedArgs)..")".."\n")
+
+            startTime = tick()
         elseif self.Name == "SellTower" then
             appendfile(fileName, "task.wait("..tostring(tick()-startTime)..")")
             appendfile(fileName, "TDX:sellTower("..tostring(serializedArgs)..")".."\n")
+
+            startTime = tick()
         elseif self.Name == "TowerUpgradeRequest" then
             appendfile(fileName, "task.wait("..tostring(tick()-startTime)..")")
             appendfile(fileName, "TDX:upgradeTower("..tostring(serializedArgs)..")".."\n")
+
+            startTime = tick()
         end
     end
 end
